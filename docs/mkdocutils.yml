@@ -1,0 +1,16 @@
+site_name: Mkdocutils
+
+theme:
+  name: "material"
+  palette:
+    primary: ""
+    accent: ""
+
+repo_name: "notpushkin/mkdocutils"
+repo_url: "https://gitlab.com/notpushkin/mkdocutils"
+edit_uri: ""
+
+nav:
+  - Introduction: index.rst
+  - Markdown primer: markdown.md
+  - reStructuredText primer: rest.rst
