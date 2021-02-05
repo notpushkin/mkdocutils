@@ -3,7 +3,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
-import mkdocutils as mkdocs
+import mkdocutils
 from mkdocutils.config import config_options
 from mkdocutils.config.base import Config
 
@@ -444,7 +444,7 @@ class SiteDirTest(unittest.TestCase):
 
         j = os.path.join
         # The parent dir is not the same on every system, so use the actual dir name
-        parent_dir = mkdocs.__file__.split(os.sep)[-3]
+        parent_dir = mkdocutils.__file__.split(os.sep)[-3]
 
         test_configs = (
             {'docs_dir': j('site', 'docs'), 'site_dir': 'site'},

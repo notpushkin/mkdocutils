@@ -15,6 +15,7 @@ import re
 import shutil
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+from contextlib import suppress
 
 import pkg_resources
 import yaml
@@ -320,13 +321,22 @@ def get_themes():
     themes = {}
 
     for theme in pkg_resources.iter_entry_points(group='mkdocs.themes'):
-        if theme.name in themes:
-            multiple_packages = [themes[theme.name].dist.key, theme.dist.key]
-            log.warning(
-                "The theme %s is provided by the Python packages "
-                "'%s'. The one in %s will be used.",
-                theme.name, ','.join(multiple_packages), theme.dist.key,
-            )
+        existing_theme = themes.get(theme.name)
+        if existing_theme:
+            if theme.dist.key == "mkdocs":
+                # Anything overrides builtin mkdocs themes
+                continue
+
+            multiple_packages = {existing_theme.dist.key, theme.dist.key}
+
+            with suppress(KeyError):
+                multiple_packages.remove("mkdocs")
+
+            if len(multiple_packages) > 1:
+                log.warning(
+                    f"The theme {theme.name} is provided by the Python packages "
+                    + f"'{','.join(multiple_packages)}'. The one in {theme.dist.key} will be used.",
+                )
 
         themes[theme.name] = theme
 

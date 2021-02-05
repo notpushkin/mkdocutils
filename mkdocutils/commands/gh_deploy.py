@@ -6,11 +6,11 @@ import subprocess
 import ghp_import
 from pkg_resources import parse_version
 
-import mkdocutils as mkdocs
+import mkdocutils
 
 log = logging.getLogger(__name__)
 
-default_message = """Deployed {sha} with MkDocs version: {version}"""
+default_message = """Deployed {sha} with Mkdocutils version: {version}"""
 
 
 def _is_cwd_git_repo():
@@ -75,21 +75,21 @@ def _check_version(branch):
         r'\d+(\.\d+)+((a|b|rc)\d+)?(\.post\d+)?(\.dev\d+)?', msg, re.X | re.I,
     )
     previousv = parse_version(m.group()) if m else None
-    currentv = parse_version(mkdocs.__version__)
+    currentv = parse_version(mkdocutils.__version__)
     if not previousv:
         log.warning(
             'Version check skipped: No version specified in previous deployment.',
         )
     elif currentv > previousv:
         log.info(
-            'Previous deployment was done with MkDocs version {}; '
+            'Previous deployment was done with Mkdocutils version {}; '
             'you are deploying with a newer version ({})'.format(
                 previousv, currentv,
             ),
         )
     elif currentv < previousv:
         log.error(
-            'Deployment terminated: Previous deployment was made with MkDocs version {}; '
+            'Deployment terminated: Previous deployment was made with Mkdocutils version {}; '
             'you are attempting to deploy with an older version ({}). Use --ignore-version '
             'to deploy anyway.'.format(previousv, currentv),
         )
@@ -113,7 +113,7 @@ def gh_deploy(config, message=None, force=False, ignore_version=False, shell=Fal
     if message is None:
         message = default_message
     sha = _get_current_sha(os.path.dirname(config.config_file_path))
-    message = message.format(version=mkdocs.__version__, sha=sha)
+    message = message.format(version=mkdocutils.__version__, sha=sha)
 
     log.info(
         "Copying '%s' to '%s' branch and pushing to GitHub.",

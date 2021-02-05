@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 class State:
     ''' Maintain logging level.'''
 
-    def __init__(self, log_name='mkdocs', level=logging.INFO):
+    def __init__(self, log_name='mkdocutils', level=logging.INFO):
         self.logger = logging.getLogger(log_name)
         self.logger.propagate = False
         stream = logging.StreamHandler()
@@ -31,10 +31,10 @@ class State:
 pass_state = click.make_pass_decorator(State, ensure=True)
 
 clean_help = "Remove old files from the site_dir before building (the default)."
-config_help = "Provide a specific MkDocs config"
+config_help = "Provide a specific Mkdocutils config"
 dev_addr_help = ("IP address and port to serve documentation locally (default: "
                  "localhost:8000)")
-strict_help = ("Enable strict mode. This will cause MkDocs to abort the build "
+strict_help = ("Enable strict mode. This will cause Mkdocutils to abort the build "
                "on any warnings.")
 theme_help = "The theme to use when building your documentation."
 theme_choices = utils.get_theme_names()
@@ -44,13 +44,13 @@ reload_help = "Enable the live reloading in the development server (this is the 
 no_reload_help = "Disable the live reloading in the development server."
 dirty_reload_help = "Enable the live reloading in the development server, but only re-build files that have changed"
 commit_message_help = ("A commit message to use when committing to the "
-                       "Github Pages remote branch. Commit {sha} and MkDocs {version} are available as expansions")
+                       "Github Pages remote branch. Commit {sha} and Mkdocutils {version} are available as expansions")
 remote_branch_help = ("The remote branch to commit to for Github Pages. This "
                       "overrides the value specified in config")
 remote_name_help = ("The remote name to commit to for Github Pages. This "
                     "overrides the value specified in config")
 force_help = "Force the push to the repository."
-ignore_version_help = "Ignore check that build is not being deployed with an older version of MkDocs."
+ignore_version_help = "Ignore check that build is not being deployed with an older version of Mkdocutils."
 watch_theme_help = ("Include the theme in list of files to watch for live reloading. "
                     "Ignored when live reload is not used.")
 wait_help = "Wait the specified number of seconds before reloading (default 0)."
@@ -116,7 +116,7 @@ PKG_DIR = os.path.dirname(os.path.abspath(__file__))
 @common_options
 def cli():
     """
-    MkDocs - Project documentation with Markdown.
+    Mkdocutils - Project documentation with Markdown.
     """
 
 
@@ -151,7 +151,7 @@ def serve_command(dev_addr, livereload, **kwargs):
 @click.option('-d', '--site-dir', type=click.Path(), help=site_dir_help)
 @common_options
 def build_command(clean, **kwargs):
-    """Build the MkDocs documentation"""
+    """Build the Mkdocutils documentation"""
 
     try:
         build.build(config.load_config(**kwargs), dirty=not clean)
@@ -190,7 +190,7 @@ def gh_deploy_command(clean, message, remote_branch, remote_name, force, ignore_
 @click.argument("project_directory")
 @common_options
 def new_command(project_directory):
-    """Create a new MkDocs project"""
+    """Create a new Mkdocutils project"""
     new.new(project_directory)
 
 

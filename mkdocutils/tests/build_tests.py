@@ -22,7 +22,7 @@ def build_page(title, path, config, md_src=''):
     ])
     page = Page(title, list(files)[0], config)
     # Fake page.read_source()
-    page.markdown, page.meta = meta.get_data(md_src)
+    page.source, page.meta = meta.get_data(md_src)
     return page, files
 
 
@@ -389,7 +389,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         )
         page = Page('Foo', file, cfg)
         build._populate_page(page, cfg, Files([file]), dirty=True)
-        self.assertTrue(page.markdown.startswith('# Welcome to MkDocs'))
+        self.assertTrue(page.source.startswith('# Welcome to MkDocs'))
         self.assertTrue(
             page.content.startswith(
             '<h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>',
@@ -407,7 +407,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         page = Page('Foo', file, cfg)
         build._populate_page(page, cfg, Files([file]), dirty=True)
         # Content is empty as file read was skipped
-        self.assertEqual(page.markdown, None)
+        self.assertEqual(page.source, None)
         self.assertEqual(page.content, None)
 
     @tempdir(files={'index.md': 'new page content'})
@@ -447,7 +447,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         page = files.documentation_pages()[0].page
         # Fake populate page
         page.title = 'Title'
-        page.markdown = 'page content'
+        page.source = 'page content'
         page.content = '<p>page content</p>'
         build._build_page(page, cfg, files, nav, cfg['theme'].get_env())
         self.assertPathIsFile(site_dir, 'index.html')
@@ -463,7 +463,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
     #     page = files.documentation_pages()[0].page
     #     # Fake populate page
     #     page.title = ''
-    #     page.markdown = ''
+    #     page.source = ''
     #     page.content = ''
     #     with self.assertLogs('mkdocs', level='INFO') as cm:
     #         build._build_page(page, cfg, files, nav, cfg['theme'].get_env())
@@ -492,7 +492,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         page = files.documentation_pages()[0].page
         # Fake populate page
         page.title = 'Title'
-        page.markdown = 'new page content'
+        page.source = 'new page content'
         page.content = '<p>new page content</p>'
         build._build_page(
             page, cfg, files, nav,
@@ -514,7 +514,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         page = files.documentation_pages()[0].page
         # Fake populate page
         page.title = 'Title'
-        page.markdown = 'page content'
+        page.source = 'page content'
         page.content = '<p>page content</p>'
         build._build_page(
             page, cfg, files, nav,
@@ -536,7 +536,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         # Fake populate page
         page.title = 'Title'
         page.meta = {'template': '404.html'}
-        page.markdown = 'page content'
+        page.source = 'page content'
         page.content = '<p>page content</p>'
         build._build_page(page, cfg, files, nav, cfg['theme'].get_env())
         self.assertPathIsFile(site_dir, 'index.html')
@@ -555,7 +555,7 @@ class BuildTests(PathAssertionMixin, unittest.TestCase):
         page = files.documentation_pages()[0].page
         # Fake populate page
         page.title = 'Title'
-        page.markdown = 'page content'
+        page.source = 'page content'
         page.content = '<p>page content</p>'
         with self.assertLogs('mkdocs', level='ERROR') as cm:
             self.assertRaises(

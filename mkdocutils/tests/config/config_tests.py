@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from tempfile import TemporaryDirectory
 
-import mkdocutils as mkdocs
+import mkdocutils
 from mkdocutils import config
 from mkdocutils.config import config_options
 from mkdocutils.exceptions import ConfigurationError
@@ -105,7 +105,7 @@ class ConfigTests(unittest.TestCase):
                 }
             ]
 
-            mkdocs_dir = os.path.abspath(os.path.dirname(mkdocs.__file__))
+            mkdocs_dir = os.path.abspath(os.path.dirname(mkdocutils.__file__))
             mkdocs_templates_dir = os.path.join(mkdocs_dir, 'templates')
             theme_dir = os.path.abspath(os.path.join(mkdocs_dir, 'themes'))
 

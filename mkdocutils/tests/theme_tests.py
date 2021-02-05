@@ -3,11 +3,11 @@ import tempfile
 import unittest
 from unittest import mock
 
-import mkdocutils as mkdocs
+import mkdocutils
 from mkdocutils.theme import Theme
 
 abs_path = os.path.abspath(os.path.dirname(__file__))
-mkdocs_dir = os.path.abspath(os.path.dirname(mkdocs.__file__))
+mkdocs_dir = os.path.abspath(os.path.dirname(mkdocutils.__file__))
 mkdocs_templates_dir = os.path.join(mkdocs_dir, 'templates')
 theme_dir = os.path.abspath(os.path.join(mkdocs_dir, 'themes'))
 

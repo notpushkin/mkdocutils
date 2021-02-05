@@ -2,16 +2,16 @@ import logging
 import os
 
 config_text = 'site_name: My Docs\n'
-index_text = """# Welcome to MkDocs
+index_text = """# Welcome to Mkdocutils
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+For full documentation visit [Mkdocutils homepage](https://mkdocutils.ale.sh/).
 
 ## Commands
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+* `mkdocutils new [dir-name]` - Create a new project.
+* `mkdocutils serve` - Start the live-reloading docs server.
+* `mkdocutils build` - Build the documentation site.
+* `mkdocutils -h` - Print help message and exit.
 
 ## Project layout
 

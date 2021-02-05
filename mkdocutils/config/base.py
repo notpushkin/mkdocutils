@@ -7,7 +7,7 @@ from yaml import YAMLError
 
 from mkdocutils import exceptions, utils
 
-log = logging.getLogger('mkdocs.config')
+log = logging.getLogger('mkdocutils.config')
 
 
 class ValidationError(Exception):

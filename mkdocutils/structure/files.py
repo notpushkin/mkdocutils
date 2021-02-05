@@ -83,7 +83,10 @@ class Files:
                     # Find the first theme dir which contains path
                     if os.path.isfile(os.path.join(dir, path)):
                         self.append(
-                            File(path, dir, config['site_dir'], config['use_directory_urls']),
+                            File(
+                                path, dir, config['site_dir'],
+                                config['use_directory_urls'],
+                            ),
                         )
                         break
 
@@ -192,13 +195,20 @@ class File:
             return os.path.getmtime(self.abs_dest_path) < os.path.getmtime(self.abs_src_path)
         return True
 
+    def get_extension(self):
+        """Return file extension."""
+        return os.path.splitext(self.src_path)[1]
+
     def is_documentation_page(self):
-        """ Return True if file is a Markdown page. """
-        return os.path.splitext(self.src_path)[1] in utils.markdown_extensions
+        """Return True if file is a supported page."""
+        return self.get_extension() in [
+            *utils.markdown_extensions,
+            ".rst",
+        ]
 
     def is_static_page(self):
         """ Return True if file is a static page (html, xml, json). """
-        return os.path.splitext(self.src_path)[1] in (
+        return self.get_extension() in (
             '.html',
             '.htm',
             '.xml',
@@ -211,14 +221,14 @@ class File:
 
     def is_javascript(self):
         """ Return True if file is a JavaScript file. """
-        return os.path.splitext(self.src_path)[1] in (
+        return self.get_extension() in (
             '.js',
             '.javascript',
         )
 
     def is_css(self):
         """ Return True if file is a CSS file. """
-        return os.path.splitext(self.src_path)[1] in (
+        return self.get_extension() in (
             '.css',
         )
 
@@ -246,11 +256,16 @@ def get_files(config):
             # Skip README.md if an index file also exists in dir
             if filename.lower() == 'readme.md' and 'index.md' in filenames:
                 log.warning(
-                    "Both index.md and readme.md found. Skipping readme.md from {}".format(source_dir),
+                    "Both index.md and readme.md found. Skipping readme.md from {}".format(
+                        source_dir,
+                    ),
                 )
                 continue
             files.append(
-                File(path, config['docs_dir'], config['site_dir'], config['use_directory_urls']),
+                File(
+                    path, config['docs_dir'], config['site_dir'],
+                    config['use_directory_urls'],
+                ),
             )
 
     return Files(files)

@@ -1,12 +1,7 @@
 import logging
-import os
-from urllib.parse import unquote as urlunquote
-from urllib.parse import urljoin, urlparse, urlunparse
-
-import markdown
-from markdown.extensions import Extension
-from markdown.treeprocessors import Treeprocessor
-from markdown.util import AMP_SUBSTITUTE
+from mkdocutils.docutils import to_html
+from pathlib import Path
+from urllib.parse import urljoin, urlparse
 
 from mkdocutils.structure.toc import get_toc
 from mkdocutils.utils import (
@@ -46,7 +41,7 @@ class Page:
         )
 
         # Placeholders to be filled in later in the build process.
-        self.markdown = None
+        self.source = None
         self.content = None
         self.toc = []
         self.meta = {}
@@ -135,12 +130,12 @@ class Page:
             except ValueError:
                 log.error(
                     'Encoding error reading file: {}'.format(
-                    self.file.src_path,
+                        self.file.src_path,
                     ),
                 )
                 raise
 
-        self.markdown, self.meta = meta.get_data(source)
+        self.source, self.meta = meta.get_data(source)
         self._set_title()
 
     def _set_title(self):
@@ -160,7 +155,7 @@ class Page:
             self.title = self.meta['title']
             return
 
-        title = get_markdown_title(self.markdown)
+        title = get_markdown_title(self.source)
 
         if title is None:
             if self.is_homepage:
@@ -178,89 +173,10 @@ class Page:
         Convert the Markdown source file to HTML as per the config.
         """
 
-        extensions = [
-            _RelativePathExtension(self.file, files),
-        ] + config['markdown_extensions']
-
-        md = markdown.Markdown(
-            extensions=extensions,
-            extension_configs=config['mdx_configs'] or {},
+        parts = to_html(
+            source=self.source,
+            src_path=self.file.src_path,
+            extension=self.file.get_extension(),
         )
-        self.content = md.convert(self.markdown)
-        self.toc = get_toc(getattr(md, 'toc_tokens', []))
-
-
-class _RelativePathTreeprocessor(Treeprocessor):
-    def __init__(self, file, files):
-        self.file = file
-        self.files = files
-
-    def run(self, root):
-        """
-        Update urls on anchors and images to make them relative
-
-        Iterates through the full document tree looking for specific
-        tags and then makes them relative based on the site navigation
-        """
-        for element in root.iter():
-            if element.tag == 'a':
-                key = 'href'
-            elif element.tag == 'img':
-                key = 'src'
-            else:
-                continue
-
-            url = element.get(key)
-            new_url = self.path_to_url(url)
-            element.set(key, new_url)
-
-        return root
-
-    def path_to_url(self, url):
-        scheme, netloc, path, params, query, fragment = urlparse(url)
-
-        if (
-            scheme or netloc or not path or url.startswith('/') or url.startswith('\\')
-            or AMP_SUBSTITUTE in url or '.' not in os.path.split(path)[-1]
-        ):
-            # Ignore URLs unless they are a relative link to a source file.
-            # AMP_SUBSTITUTE is used internally by Markdown only for email.
-            # No '.' in the last part of a path indicates path does not point to a file.
-            return url
-
-        # Determine the filepath of the target.
-        target_path = os.path.join(
-            os.path.dirname(
-            self.file.src_path,
-            ), urlunquote(path),
-        )
-        target_path = os.path.normpath(target_path).lstrip(os.sep)
-
-        # Validate that the target exists in files collection.
-        if target_path not in self.files:
-            log.warning(
-                "Documentation file '{}' contains a link to '{}' which is not found "
-                "in the documentation files.".format(
-                    self.file.src_path, target_path,
-                ),
-            )
-            return url
-        target_file = self.files.get_file_from_path(target_path)
-        path = target_file.url_relative_to(self.file)
-        components = (scheme, netloc, path, params, query, fragment)
-        return urlunparse(components)
-
-
-class _RelativePathExtension(Extension):
-    """
-    The Extension class is what we pass to markdown, it then
-    registers the Treeprocessor.
-    """
-
-    def __init__(self, file, files):
-        self.file = file
-        self.files = files
-
-    def extendMarkdown(self, md):
-        relpath = _RelativePathTreeprocessor(self.file, self.files)
-        md.treeprocessors.register(relpath, "relpath", 0)
+        self.content = parts
+        self.toc = get_toc([])  # TODO

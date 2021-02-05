@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import jinja2
 from jinja2.exceptions import TemplateNotFound
 
-import mkdocutils as mkdocs
+import mkdocutils
 from mkdocutils import utils
 from mkdocutils.exceptions import BuildError
 from mkdocutils.structure.files import Files, get_files
@@ -56,7 +56,10 @@ def get_context(nav, files, config, page=None, base_url=''):
         'extra_css': extra_css,
         'extra_javascript': extra_javascript,
 
-        'mkdocs_version': mkdocs.__version__,
+        'mkdocs_version': (
+            f'1.2 (compatible; mkdocutils-{mkdocutils.__version__})'  # noqa: WPS609
+        ),
+        'generator': f'mkdocutils-{mkdocutils.__version__}',  # noqa: WPS609
         'build_date_utc': utils.get_build_datetime(),
 
         'config': config,
@@ -179,8 +182,8 @@ def _populate_page(page, config, files, dirty=False):
         page.read_source(config)
 
         # Run `page_markdown` plugin events.
-        page.markdown = config['plugins'].run_event(
-            'page_markdown', page.markdown, page=page, config=config, files=files,
+        page.source = config['plugins'].run_event(
+            'page_markdown', page.source, page=page, config=config, files=files,
         )
 
         page.render(config, files)

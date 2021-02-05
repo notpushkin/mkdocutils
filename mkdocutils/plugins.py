@@ -11,7 +11,7 @@ from collections import OrderedDict
 from mkdocutils.config.base import Config
 
 
-log = logging.getLogger('mkdocs.plugins')
+log = logging.getLogger('mkdocutils.plugins')
 
 
 EVENTS = (

@@ -11,12 +11,14 @@ jinja2 = "^2.11.2"
 click = "^7.1.2"
 Jinja2 = ">=2.10.1"
 livereload = ">=2.5.1"
-lunr = {version = "0.5.8", extras = ["languages"]}
-Markdown = ">=3.2.1"
+lunr = { version = "0.5.8", extras = ["languages"] }
 PyYAML = ">=3.10"
 tornado = ">=5.0"
 ghp-import = ">=1.0"
 pyyaml_env_tag = ">=0.1"
+mkdocs-material = "^6.2.5"
+recommonmark = "^0.7.1"
+myst-parser = "^0.13.3"
 
 [tool.poetry.dev-dependencies]
 flakehell = "^0.9.0"
@@ -37,6 +39,8 @@ readthedocs = "mkdocutils.themes.readthedocs"
 [tool.flakehell]
 baseline = ".flakehell_baseline"
 exclude = [".venv/**"]
+format = "wemake"
+inline-quotes = "double"
 
 [tool.flakehell.plugins]
 "flake8-*" = ["+*"]
@@ -46,6 +50,47 @@ nitpick = ["+*"]
 pycodestyle = ["+*"]
 pyflakes = ["+*"]
 "wemake-python-styleguide" = ["+*"]
+
+[tool.flakehell.exceptions."**"]
+"*" = [
+  # These are purely subjective, the other ones will come with explanations:
+  "-D100",    # Missing docstring in public module
+  "-D104",    # Missing docstring in public package
+  "-D200",    # One-line docstring should fit on one line with quotes
+  "-D202",    # blank lines after long docstrings
+  "-WPS110",  # Found wrong variable name
+  "-WPS125",  # Found builtin shadowing (shadowing id is not a crime :-)
+  "-WPS300",  # Found local folder import
+  "-WPS305",  # Found `f` string
+  "-WPS332",  # Found walrus operator
+  "-WPS430",  # Found nested function
+
+  # Upstream doesn't have a uniform quote style:
+  "-Q000",    # Remove bad quotes
+
+  # Not yet configured properly but seems useful:
+  "-DAR",     # https://github.com/terrencepreilly/darglint#error-codes
+
+  # Ignored for now but probably should bump the limit:
+  "-E501",    # line too long
+
+  # False positives:
+  "-E800",    # Found commented out code
+
+  # Doesn't play well with f-strings:
+  "-WPS226",  # Found string constant over-use
+
+  # Useful in some cases, maybe use as noqa instead:
+  "-WPS412",  # Found `__init__.py` module with logic
+
+  # What's the purpose of protected modules if even
+  # the author can't import it?!
+  "-WPS436",  # Found protected module import
+
+  # These two fail to detect new scope for control variables:
+  "-WPS440",  # Found block variables overlap
+  "-WPS441",  # Found control variable used after block
+]
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -351,7 +351,7 @@ class SearchIndexTests(unittest.TestCase):
 
         for page in pages:
             # Fake page.read_source() and page.render()
-            page.markdown = md
+            page.source = md
             page.toc = toc
             page.content = html_content
 

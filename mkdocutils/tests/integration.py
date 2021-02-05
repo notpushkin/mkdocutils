@@ -23,7 +23,7 @@ import click
 
 from mkdocutils import utils
 
-log = logging.getLogger('mkdocs')
+log = logging.getLogger('mkdocutils')
 
 DIR = os.path.dirname(__file__)
 MKDOCS_CONFIG = os.path.abspath(os.path.join(DIR, '../../mkdocutils.yml'))
